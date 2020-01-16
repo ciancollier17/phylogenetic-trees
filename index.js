@@ -1,4 +1,5 @@
 const DistanceMatrix = require('./DistanceMatrix');
+const loadFASTA = require('./loadFASTA');
 
 const dm = new DistanceMatrix([
   ["Seq1", "ATATATAT"],
