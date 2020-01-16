@@ -4,6 +4,7 @@ const arrayError = "Matrix: Matrix must be initialised with an array.";
 const funcError = "Matrix: Matrix expects a function for its second argument.";
 const notFoundError = "Matrix: get: The supplied sequences were not found in the matrix.";
 const notFoundErrorUpdate = "Matrix: update: The supplied sequences were not found in the matrix.";
+const notFoundErrorRemove = "Matrix: remove: The supplied sequences were not found in the matrix.";
 const noNewValueError = "Matrix: update: no newValue specified";
 
 test("Throws exception when no array argument given", () => {
@@ -44,4 +45,28 @@ test("Update throws exception if sequences not found", () => {
 
 test("Update throws exception if no newValue given", () => {
   expect(() => matrix.update("Seq1", "Seq2")).toThrow(noNewValueError);
+});
+
+test("Can add sequence to matrix", () => {
+  matrix.add(["Seq4", "CCCC"]);
+  expect(matrix.get("Seq4", "Seq1")).toEqual("CCCCATAT");
+  expect(matrix.get("Seq2", "Seq4")).toEqual("TATACCCC");
+  expect(matrix.get("Seq4", "Seq4")).toEqual("CCCCCCCC");
+});
+
+test("Can add sequence to matrix using different function", () => {
+  matrix.add(["Seq5", null], (s1, s2) => 2);
+  expect(matrix.get("Seq5", "Seq1")).toEqual(2);
+  expect(matrix.get("Seq2", "Seq5")).toEqual(2);
+  expect(matrix.get("Seq5", "Seq5")).toEqual(2);
+});
+
+test("Can remove a sequence from the matrix", () => {
+  matrix.remove("Seq2");
+  expect(() => matrix.get("Seq2", "Seq2")).toThrow(notFoundError);
+  expect(() => matrix.get("Seq3", "Seq2")).toThrow(notFoundError);
+});
+
+test("Remove throws exception when sequence not found", () => {
+  expect(() => matrix.remove("Seq10")).toThrow(notFoundErrorRemove);
 });

@@ -15,6 +15,7 @@ function Matrix (sequences, func) {
   this.data = [];
   this.namesToIndex = {};
   this.namesToSequences = {};
+  this.func = func;
 
   for (let i = 0; i < sequences.length; i++) {
     this.namesToIndex[sequences[i][0]] = i;
@@ -45,6 +46,45 @@ Matrix.prototype.update = function (s1, s2, newValue) {
   }
 
   this.data[this.namesToIndex[s1]][this.namesToIndex[s2]] = newValue;
+}
+
+Matrix.prototype.add = function (sequence, func = null) {
+  func = func ? func : this.func;
+  let values = [];
+  let i = 0;
+
+  for (let name in this.namesToSequences) {
+    values.push(func(sequence[1], this.namesToSequences[name]));
+    this.data[i].push(func(this.namesToSequences[name], sequence[1]));
+    i++;
+  }
+
+  values.push(func(sequence[1], sequence[1]));
+  this.data.push(values);
+  this.namesToSequences[sequence[0]] = sequence[1];
+  this.namesToIndex[sequence[0]] = this.data.length - 1;
+}
+
+Matrix.prototype.remove = function (sequence) {
+  if (typeof this.namesToIndex[sequence] == 'undefined') {
+    throw new Error("Matrix: remove: The supplied sequences were not found in the matrix.");
+  }
+
+  let index = this.namesToIndex[sequence];
+  this.data.splice(index, 1);
+
+  for (let name in this.namesToIndex) {
+    if (this.namesToIndex[name] > index) {
+      this.namesToIndex[name] = this.namesToIndex[name] - 1;
+    } else if (this.namesToIndex[name] == index) {
+      delete this.namesToIndex[name];
+      delete this.namesToSequences[name];
+    }
+  }
+
+  for (let i = 0; i < this.data.length; i++) {
+    this.data[i].splice(index, 1);
+  }
 }
 
 module.exports = Matrix;
