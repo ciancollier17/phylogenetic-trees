@@ -35,7 +35,8 @@ function calculateGeneticDistance(s1, s2) {
   }
 
   let T = fu + I + G;
-  return -0.75 * Math.log(1 - ((4 / 3) * (fu / (fu + I)))) * (1 - (G / T)) + (G / T);
+  let value = -0.75 * Math.log(1 - ((4 / 3) * (fu / (fu + I)))) * (1 - (G / T)) + (G / T);
+  return (isFinite(value) ? value : Number.MAX_SAFE_INTEGER);
 }
 
 module.exports = calculateGeneticDistance;

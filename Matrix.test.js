@@ -70,3 +70,9 @@ test("Can remove a sequence from the matrix", () => {
 test("Remove throws exception when sequence not found", () => {
   expect(() => matrix.remove("Seq10")).toThrow(notFoundErrorRemove);
 });
+
+let numericMatrix = new Matrix([['A', 'AAAAA'], ['B', 'AAA'], ['C', 'AAAA']], (s1, s2) => s1.length + s2.length);
+
+test("Min correctly finds minimum of matrix", () => {
+  expect(numericMatrix.min()).toEqual(['B', 'B']);
+});

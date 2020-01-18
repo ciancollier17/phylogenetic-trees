@@ -23,7 +23,7 @@ function Matrix (sequences, func) {
     this.data.push([]);
 
     for (let k = 0; k < sequences.length; k++) {
-      this.data[i].push(func(sequences[i][1], sequences[k][1]));
+      this.data[i].push(func(sequences[i][1], sequences[k][1], sequences[i][0], sequences[k][0]));
     }
   }
 }
@@ -54,8 +54,8 @@ Matrix.prototype.add = function (sequence, func = null) {
   let i = 0;
 
   for (let name in this.namesToSequences) {
-    values.push(func(sequence[1], this.namesToSequences[name]));
-    this.data[i].push(func(this.namesToSequences[name], sequence[1]));
+    values.push(func(sequence[1], this.namesToSequences[name], sequence[0], name));
+    this.data[i].push(func(this.namesToSequences[name], sequence[1], name, sequence[0]));
     i++;
   }
 
@@ -85,6 +85,24 @@ Matrix.prototype.remove = function (sequence) {
   for (let i = 0; i < this.data.length; i++) {
     this.data[i].splice(index, 1);
   }
+}
+
+Matrix.prototype.min = function () {
+  let minValue = Number.MAX_SAFE_INTEGER;
+  let minPair = [];
+
+  for (let s1 in this.namesToIndex) {
+    for (let s2 in this.namesToIndex) {
+      let value = this.data[this.namesToIndex[s1]][this.namesToIndex[s2]];
+
+      if (value < minValue) {
+        minValue = value;
+        minPair = [s1, s2];
+      }
+    }
+  }
+
+  return minPair;
 }
 
 module.exports = Matrix;

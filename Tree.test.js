@@ -1,6 +1,6 @@
 const Tree = require('./Tree');
 
-test("Can parse tree in Newick format with depth of 1", () => {
+test("Can parse tree with depth of 1", () => {
   let tree = new Tree([['A', 1], ['B', 1], ['C', 1]]);
   expect(tree.root.children[0].branchLength).toEqual(1);
   expect(tree.root.children[1].branchLength).toEqual(1);
@@ -8,7 +8,7 @@ test("Can parse tree in Newick format with depth of 1", () => {
   expect(tree.root.children[2].parent.children[1].branchLength).toEqual(1);
 });
 
-test("Can parse tree in Newick format with depth of 3", () => {
+test("Can parse tree with depth of 3", () => {
   let tree = new Tree([['A', 1], [[['B', 2], [[['D', 1], ['E', 5]], 1]], 3], ['C', 1]]);
   expect(tree.root.children[0].branchLength).toEqual(1);
   expect(tree.root.children[1].children[1].branchLength).toEqual(1);
