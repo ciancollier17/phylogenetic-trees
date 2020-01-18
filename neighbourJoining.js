@@ -9,6 +9,10 @@ const Tree = require('./Tree');
 function neighbourJoining (distanceMatrix) {
   let mergeNum = 0;
   let sequences = distanceMatrix.sequences;
+  let leaves = sequences.map(seq => {
+    return [seq[0], 0];
+  });
+  let tree = new Tree(leaves);
 
   while(sequences.length > 3) {
     let Q = distanceMatrix.generateQMatrix();

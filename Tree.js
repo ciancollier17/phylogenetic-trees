@@ -54,4 +54,45 @@ Tree.prototype.toNewick = function () {
   return toNewick(this.root, "", 0) + ";";
 }
 
+Tree.prototype.mergeNodes = function (n1, n2, newParentName, newParentBranchLength) {
+  let queue = [this.root];
+  let n1p, n2p;
+
+  while (queue.length > 0) {
+    let node = queue.shift();
+
+    if (node.name == n1) { n1p = node }
+    else if (node.name == n2) { n2p = node }
+
+    for (let i = 0; i < node.children.length; i++) {
+      queue.unshift(node.children[i]);
+    }
+
+    if (n1p && n2p) { break; }
+  }
+
+  if (n1p && n2p) {
+    let sharedParent = new Node(newParentName, newParentBranchLength, n1p.parent);
+    let longerList = n1p.parent.children.length > n2p.parent.children.length ? n1p.parent.children.length : n2p.parent.children.length;
+
+    for (let i = 0; i < longerList; i++) {
+      if (typeof n1p.parent.children[i] != 'undefined') {
+        if (n1p.parent.children[i].name == n1) {
+          n1p.parent.children.splice(i, 1);
+        }
+      }
+
+      if (typeof n2p.parent.children[i] != 'undefined') {
+        if (n2p.parent.children[i].name == n2) {
+          n2p.parent.children.splice(i, 1);
+        }
+      }
+    }
+
+    n1p.parent.addChild(sharedParent);
+    sharedParent.addChild(n1p);
+    sharedParent.addChild(n2p);
+  }
+}
+
 module.exports = Tree;
