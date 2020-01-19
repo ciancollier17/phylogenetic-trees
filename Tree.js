@@ -54,7 +54,7 @@ Tree.prototype.toNewick = function () {
   return toNewick(this.root, "", 0) + ";";
 }
 
-Tree.prototype.mergeNodes = function (n1, n2, newParentName, newParentBranchLength) {
+Tree.prototype.mergeNodes = function (n1, n2, newParentName, newParentBranchLength, branchLengthF = 0, branchLengthG = 0) {
   let queue = [this.root];
   let n1p, n2p;
 
@@ -92,7 +92,9 @@ Tree.prototype.mergeNodes = function (n1, n2, newParentName, newParentBranchLeng
     }
 
     n1p.parent.addChild(sharedParent);
+    n1p.branchLength = branchLengthF;
     sharedParent.addChild(n1p);
+    n2p.branchLength = branchLengthG;
     sharedParent.addChild(n2p);
   }
 }

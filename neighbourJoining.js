@@ -23,6 +23,10 @@ function neighbourJoining (distanceMatrix) {
 
     console.log(minimum);
 
+    // Calculate length  of branches to new node
+    let branchLengthF = 0.5 * distanceMatrix.get(f, g) + ((1 / (2 * (sequences.length - 2))) * (distanceMatrix.sum(f) - distanceMatrix.sum(g)));
+    let branchLengthG = distanceMatrix.get(f, g) - branchLengthF;
+
     // Update the distance matrix with the new node
     distanceMatrix.add([mergeNum.toString(), ""], (s1, s2, n1, n2) => {
       if (n1 == n2) {
@@ -41,10 +45,18 @@ function neighbourJoining (distanceMatrix) {
     distanceMatrix.remove(g);
 
     // Update the tree
-    tree.mergeNodes(f, g, mergeNum.toString(), 1);
+    tree.mergeNodes(f, g, mergeNum.toString(), 1, branchLengthF, branchLengthG);
     mergeNum++;
   }
 
+  let a = tree.root.children[0];
+  let b = tree.root.children[1];
+  let c = tree.root.children[2];
+
+  a.branchLength = 0.5 * distanceMatrix.get(a.name, b.name) + 0.5 * (distanceMatrix.sum(a.name) - distanceMatrix.sum(b.name));
+  b.branchLength = distanceMatrix.get(a.name, b.name) - a.branchLength;
+  c.branchLength = distanceMatrix.get(a.name, c.name) - a.branchLength;
+  
   return tree.toNewick();
 }
 
