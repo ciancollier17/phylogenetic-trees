@@ -15,6 +15,7 @@ function neighbourJoining (distanceMatrix) {
   let tree = new Tree(leaves);
 
   while(sequences.length > 3) {
+    // Generate Q matrix and select minimum value
     let Q = distanceMatrix.generateQMatrix();
     let minimum = Q.min();
     let f = minimum[0];
@@ -22,6 +23,7 @@ function neighbourJoining (distanceMatrix) {
 
     console.log(minimum);
 
+    // Update the distance matrix with the new node
     distanceMatrix.add([mergeNum.toString(), ""], (s1, s2, n1, n2) => {
       if (n1 == n2) {
         return 0;
@@ -37,8 +39,13 @@ function neighbourJoining (distanceMatrix) {
 
     distanceMatrix.remove(f);
     distanceMatrix.remove(g);
+
+    // Update the tree
+    tree.mergeNodes(f, g, mergeNum.toString(), 1);
     mergeNum++;
   }
+
+  return tree.toNewick();
 }
 
 module.exports = neighbourJoining;

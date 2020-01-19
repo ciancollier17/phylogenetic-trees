@@ -30,6 +30,11 @@ test("Can convert tree with depth of 3 to Newick format", () => {
   expect(tree.toNewick()).toEqual("(A:1,(B:3,(C:5,D:6):4):2);");
 });
 
+test("Can remove illegal characters from Newick format string", () => {
+  const tree = new Tree([['A Mammal',2], ['A:Snake', 2], ['A,Comma', 2], ['(A_Tree)', 2]]);
+  expect(tree.toNewick()).toEqual("(A_Mammal:2,A_Snake:2,A_Comma:2,_A_Tree_:2);");
+});
+
 test("Can merge single pair of nodes in tree", () => {
   const tree = new Tree([['A', 1], ['B', 1], ['C', 1]]);
   tree.mergeNodes('A', 'B', 'D', 2);

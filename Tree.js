@@ -43,7 +43,7 @@ Tree.prototype.toNewick = function () {
     }
 
     if (current.children[childCounter].name && current.children[childCounter].children.length == 0) {
-      acc += current.children[childCounter].name + ":" + current.children[childCounter].branchLength.toString() + ",";
+      acc += current.children[childCounter].name.replace(/[,\s:)(]/g, "_") + ":" + current.children[childCounter].branchLength.toString() + ",";
     } else {
       acc += toNewick(current.children[childCounter], "", 0) + ":" + current.children[childCounter].branchLength.toString() + ",";
     }
@@ -79,12 +79,14 @@ Tree.prototype.mergeNodes = function (n1, n2, newParentName, newParentBranchLeng
       if (typeof n1p.parent.children[i] != 'undefined') {
         if (n1p.parent.children[i].name == n1) {
           n1p.parent.children.splice(i, 1);
+          i--;
         }
       }
 
       if (typeof n2p.parent.children[i] != 'undefined') {
         if (n2p.parent.children[i].name == n2) {
           n2p.parent.children.splice(i, 1);
+          i--;
         }
       }
     }
