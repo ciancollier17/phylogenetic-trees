@@ -1,12 +1,35 @@
+const fs = require('fs');
 const DistanceMatrix = require('./DistanceMatrix');
 const loadFASTA = require('./loadFASTA');
+const Tree = require('./Tree.js');
 
-let sequences = [];
+if (!process.argv[2]) {
+  throw new Error("ERROR: Please enter an input FASTA file");
+}
 
-loadFASTA('./testFASTAS/test4.fasta').then(data => {
-  sequences = data;
-  let dm = new DistanceMatrix(sequences);
-  console.log(dm.get("NC_002546.1:6871-8403 Fasciola hepatica mitochondrion, complete genome", "NC_012920.1:5904-7445 Homo sapiens mitochondrion, complete genome"));
-  console.log(dm.get("NC_012920.1:5904-7445 Homo sapiens mitochondrion, complete genome", "NC_001643.1:5321-6862 Pan troglodytes mitochondrion, complete genome"));
-  console.log(dm.get("NC_001643.1:5321-6862 Pan troglodytes mitochondrion, complete genome", "NC_012920.1:5904-7445 Homo sapiens mitochondrion, complete genome"))
+if (!process.argv[3]) {
+  throw new Error("ERROR: Please enter an output NWK file");
+}
+
+if (!process.argv[4]) {
+  throw new Error("ERROR: Please enter an outgroup.")
+}
+
+console.log(process.argv[2]);
+
+let input = [];
+loadFASTA(process.argv[2]).then(data => {
+  input = data;
+
+  let distanceMatrix = new DistanceMatrix(input);
+  let tree = distanceMatrix.neighbourJoining();
+  tree.reroot(process.argv[4]);
+
+  fs.writeFile(process.argv[3], tree.toNewick(), err => {
+    if (err) {
+      console.log("ERROR: Could not write output file");      
+    }
+  });
+}).catch(e => {
+  console.log("ERROR: Input file could not be opened");
 });

@@ -56,8 +56,8 @@ function neighbourJoining (distanceMatrix) {
   a.branchLength = 0.5 * distanceMatrix.get(a.name, b.name) + 0.5 * (distanceMatrix.sum(a.name) - distanceMatrix.sum(b.name));
   b.branchLength = distanceMatrix.get(a.name, b.name) - a.branchLength;
   c.branchLength = distanceMatrix.get(a.name, c.name) - a.branchLength;
-  
-  return tree.toNewick();
+
+  return tree;
 }
 
 module.exports = neighbourJoining;
