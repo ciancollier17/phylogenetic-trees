@@ -99,4 +99,56 @@ Tree.prototype.mergeNodes = function (n1, n2, newParentName, newParentBranchLeng
   }
 }
 
+Tree.prototype.findNode = function (toFind) {
+  let queue = [this.root];
+  let found;
+
+  while (queue.length > 0) {
+    let node = queue.shift();
+
+    if (node.name == toFind) { found = node; break; }
+
+    for (let i = 0; i < node.children.length; i++) {
+      queue.unshift(node.children[i]);
+    }
+  }
+
+  if (found) {
+    return found;
+  } else {
+    throw new Error("Tree: findNode: Node not found in tree");
+  }
+}
+
+Tree.prototype.reroot = function (outgroup) {
+  let outgroupNode = this.findNode(outgroup);
+  let newRoot = outgroupNode.parent;
+  this.root = newRoot;
+
+  let currentNode = newRoot;
+  let parents = [];
+
+  while (true ) {
+    parents.push(currentNode);
+    if (currentNode.parent == null) { break; }
+    currentNode = currentNode.parent;
+  }
+
+  for (let i = 0; i < parents.length - 1; i++) {
+    parents[i].addChild(parents[i + 1]);
+
+    for (let k = 0; k < parents[i + 1].children.length; k++) {
+      if (parents[i + 1].children[k] == parents[i]) {
+        parents[i + 1].children.splice(k, 1);
+      }
+    }
+  }
+
+  for (let i = parents.length - 1; i > 0; i--) {
+    parents[i].branchLength = parents[i - 1].branchLength;
+  }
+
+  this.root.branchLength = null;
+}
+
 module.exports = Tree;

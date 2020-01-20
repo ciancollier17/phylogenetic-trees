@@ -37,7 +37,7 @@ test("Can remove illegal characters from Newick format string", () => {
 
 test("Can merge single pair of nodes in tree", () => {
   const tree = new Tree([['A', 1], ['B', 1], ['C', 1]]);
-  tree.mergeNodes('A', 'B', 'D', 2);
+  tree.mergeNodes('A', 'B', 'D', 2, 1, 1);
   expect(tree.root.children.length).toEqual(2);
   expect(tree.root.children[1].name).toEqual('D');
   expect(tree.root.children[1].branchLength).toEqual(2);
@@ -46,10 +46,22 @@ test("Can merge single pair of nodes in tree", () => {
 
 test("Can merge tree twice to create a tree with depth of 3", () => {
   const tree = new Tree([['A', 1], ['B', 1], ['C', 1], ['D', 1]]);
-  tree.mergeNodes('A', 'B', 'E', 2);
-  tree.mergeNodes('E', 'C', 'F', 3);
+  tree.mergeNodes('A', 'B', 'E', 2, 1, 1);
+  tree.mergeNodes('E', 'C', 'F', 3, 2, 1);
   expect(tree.root.children.length).toEqual(2);
   expect(tree.root.children[1].name).toEqual('F');
   expect(tree.root.children[1].branchLength).toEqual(3);
   expect(tree.toNewick()).toEqual("(D:1,((A:1,B:1):2,C:1):3);");
+});
+
+test("Can reroot tree with depth of 2", () => {
+  const tree = new Tree([['A', 1], [[['B', 1], ['D', 1]], 1], ['C', 1]]);
+  tree.reroot('D');
+  expect(tree.toNewick()).toEqual("(B:1,D:1,(A:1,C:1):1);");
+});
+
+test("Can reroot tree with depth of 3", () => {
+  const tree = new Tree([['A', 1], ['B', 1], [[['E', 3], [[['C', 1], ['D', 1]], 2]], 2]]);
+  tree.reroot('C');
+  expect(tree.toNewick()).toEqual("(C:1,D:1,(E:3,(A:1,B:1):2):2);");
 });
